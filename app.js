@@ -102,61 +102,65 @@ add.addEventListener("click", (e) => {
   form.children[2].value = "";
 });
 
-// load data
-let myList = localStorage.getItem("list");
-if (myList != null) {
-  let myListArray = JSON.parse(myList);
-  myListArray.forEach((item) => {
-    // create a todo
-    let todo = document.createElement("div");
-    todo.classList.add("todo");
+loadData();
 
-    let text = document.createElement("p");
-    text.classList.add("todoText");
-    text.innerText = item.todoText;
-    let time = document.createElement("p");
-    time.classList.add("todoTime");
-    time.innerText = item.todoMonth + " / " + item.todoDate;
+function loadData() {
+  // load data
+  let myList = localStorage.getItem("list");
+  if (myList != null) {
+    let myListArray = JSON.parse(myList);
+    myListArray.forEach((item) => {
+      // create a todo
+      let todo = document.createElement("div");
+      todo.classList.add("todo");
 
-    todo.appendChild(text);
-    todo.appendChild(time);
+      let text = document.createElement("p");
+      text.classList.add("todoText");
+      text.innerText = item.todoText;
+      let time = document.createElement("p");
+      time.classList.add("todoTime");
+      time.innerText = item.todoMonth + " / " + item.todoDate;
 
-    // create green check and red trash can
-    let completeButton = document.createElement("button");
-    completeButton.classList.add("complete");
-    completeButton.innerHTML = '<i class="fas fa-check"></i>';
-    completeButton.addEventListener("click", (e) => {
-      let todoItem = e.target.parentElement;
-      todoItem.classList.toggle("done");
-    });
+      todo.appendChild(text);
+      todo.appendChild(time);
 
-    let trashButton = document.createElement("button");
-    trashButton.classList.add("trash");
-    trashButton.innerHTML = '<i class="fas fa-trash"></i>';
-    trashButton.addEventListener("click", (e) => {
-      let todoItem = e.target.parentElement;
-      // 如果沒有這個addEventListener, 直接放remove, 則按下trashButtom的時候, 動畫來不及結束, 就會把todoItem給刪除, 也就是會看不到效果.
-      todoItem.addEventListener("animationend", () => {
-        // remove from local storage
-        let text = todoItem.children[0].innerText;
-        let myListArray = JSON.parse(localStorage.getItem("list"));
-        myListArray.forEach((item, index) => {
-          if (item.todoText == text) {
-            myListArray.splice(index, 1);
-            localStorage.setItem("list", JSON.stringify(myListArray));
-          }
-        });
-
-        todoItem.remove();
+      // create green check and red trash can
+      let completeButton = document.createElement("button");
+      completeButton.classList.add("complete");
+      completeButton.innerHTML = '<i class="fas fa-check"></i>';
+      completeButton.addEventListener("click", (e) => {
+        let todoItem = e.target.parentElement;
+        todoItem.classList.toggle("done");
       });
-      todoItem.style.animation = "scaleDown 0.3s forwards";
+
+      let trashButton = document.createElement("button");
+      trashButton.classList.add("trash");
+      trashButton.innerHTML = '<i class="fas fa-trash"></i>';
+      trashButton.addEventListener("click", (e) => {
+        let todoItem = e.target.parentElement;
+        // 如果沒有這個addEventListener, 直接放remove, 則按下trashButtom的時候, 動畫來不及結束, 就會把todoItem給刪除, 也就是會看不到效果.
+        todoItem.addEventListener("animationend", () => {
+          // remove from local storage
+          let text = todoItem.children[0].innerText;
+          let myListArray = JSON.parse(localStorage.getItem("list"));
+          myListArray.forEach((item, index) => {
+            if (item.todoText == text) {
+              myListArray.splice(index, 1);
+              localStorage.setItem("list", JSON.stringify(myListArray));
+            }
+          });
+
+          todoItem.remove();
+        });
+        todoItem.style.animation = "scaleDown 0.3s forwards";
+      });
+
+      todo.appendChild(completeButton);
+      todo.appendChild(trashButton);
+
+      section.appendChild(todo);
     });
-
-    todo.appendChild(completeButton);
-    todo.appendChild(trashButton);
-
-    section.appendChild(todo);
-  });
+  }
 }
 
 function mergeTime(arr1, arr2) {
@@ -204,3 +208,19 @@ function mergeSort(arr) {
     return mergeTime(mergeSort(right), mergeSort(left));
   }
 }
+
+let sortButton = document.querySelector("div.sort button");
+sortButton.addEventListener("click", (e) => {
+  // sort data
+  let sortedArray = mergeSort(JSON.parse(localStorage.getItem("list")));
+  localStorage.setItem("list", JSON.stringify(sortedArray));
+
+  //remove data
+  let len = section.children.length;
+  for (let i = 0; i < len; i++) {
+    section.children[0].remove();
+  }
+
+  // load data
+  loadData();
+});
