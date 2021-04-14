@@ -135,6 +135,28 @@ section div.todo button.complete {
   background-color: #03b103;
 }
 
+div.sort {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin: 1rem 0rem;
+}
+
+div.sort button {
+  cursor: pointer;
+  background-color: #009272;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  font-size: 1.75rem;
+  border: none;
+}
+
 .done {
   opacity: 0.5;
   text-decoration: line-through;
